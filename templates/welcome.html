@@ -5,39 +5,181 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bienvenido</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Incluir Font Awesome para los íconos -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <h2>¡Bienvenido, {{ username }}!</h2>
-        
-        <div class="pdf-options">
-            <h3>Gestiona tus PDFs:</h3>
-            <ul>
-                <li>
-                    <form action="/upload_pdf" method="POST" enctype="multipart/form-data">
-                        <input type="hidden" name="username" value="{{ username }}">
-                        <input type="hidden" name="user_id" value="{{ user.id }}">
-                        <input type="file" name="pdf" accept=".pdf" required>
-                        <button type="submit">Agregar PDF</button>
-                    </form>
-                </li>
-                <li>
-                    <h4>Ver PDFs</h4>
-                    <ul>
-                        {% for pdf in pdfs %}
-                            <li>
-                                <a href="{{ url_for('static', filename='uploads/' + pdf.filename) }}" target="_blank">
-                                    {{ pdf.filename }}
-                                </a>
-                                <form action="/delete_pdf/{{ pdf.id }}" method="POST">
-                                    <button type="submit">Eliminar</button>
-                                </form>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </li>
-            </ul>
-        </div>
+        <h2>Bienvenido, Carpeta de tus PDFs</h2>
+
+        <!-- Formulario para subir PDF -->
+        <form action="{{ url_for('welcome', username=username) }}" method="POST" enctype="multipart/form-data">
+            <div class="upload-container">
+                <input type="file" name="file" accept=".pdf" required>
+                <button type="submit">Subir PDF</button>
+            </div>
+        </form>
+
+        <h3>Pdfs disponibles</h3>
+        <!-- Tabla de PDFs -->
+        <table class="pdf-table">
+            <thead>
+                <tr>
+                    <th>Nombre del PDF</th>
+                    <th>Acción</th>
+                    <th>Eliminar</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pdf in pdfs %}
+                <tr>
+                    <td>{{ pdf.filename }}</td>
+                    <td>
+                        <!-- Enlace para ver el archivo PDF -->
+                        <a href="{{ url_for('uploaded_file', filename=pdf.filename) }}" target="_blank">
+                            <i class="fas fa-eye"></i> Ver
+                        </a> | 
+                        <!-- Enlace para descargar el archivo PDF -->
+                        <a href="{{ url_for('uploaded_file', filename=pdf.filename) }}" download="{{ pdf.filename }}">
+                            <i class="fas fa-download"></i> Descargar
+                        </a>
+                    </td>
+                    <td>
+                        <!-- Enlace para eliminar el archivo PDF -->
+                        <a href="{{ url_for('delete_pdf', pdf_id=pdf.id) }}" onclick="return confirm('¿Estás seguro de que quieres eliminar este archivo?');">
+                            <i class="fas fa-trash-alt"></i> Eliminar
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </body>
 </html>
+
+<style>
+    /* Estilos generales */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Contenedor principal */
+.container {
+    text-align: center;
+    width: 100%;
+    max-width: 800px; /* Mayor tamaño para que sea más cómodo en pantallas grandes */
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    max-height: 90vh; /* Limitar la altura máxima del contenedor */
+    overflow-y: auto; /* Agregar scroll vertical cuando el contenido exceda */
+}
+
+/* Estilos para los títulos */
+h2, h3 {
+    color: #333;
+}
+
+/* Formulario de carga de PDF */
+.upload-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.upload-container input {
+    width: 70%;
+    padding: 12px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.upload-container button {
+    padding: 12px;
+    width: 25%;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.upload-container button:hover {
+    background-color: #45a049;
+}
+
+/* Tabla de PDFs */
+.pdf-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.pdf-table th, .pdf-table td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.pdf-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    color: #333;
+}
+
+.pdf-table td {
+    color: #555;
+}
+
+.pdf-table td a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+.pdf-table td a:hover {
+    color: #0056b3;
+}
+
+/* Estilo para el botón de eliminar */
+.pdf-table td a:hover {
+    color: red;
+}
+
+/* Estilos para los enlaces en la tabla */
+.pdf-table tr:hover {
+    background-color: #f9f9f9;
+}
+/* Estilos para los íconos */
+.pdf-table td a i {
+    margin-right: 5px; /* Espacio entre el ícono y el texto */
+    font-size: 18px; /* Ajustar el tamaño del ícono */
+}
+
+/* Asegurarnos de que los íconos no se desalineen */
+.pdf-table td a {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    color: #007bff;
+}
+
+.pdf-table td a:hover {
+    color: #0056b3;
+}
+
+.pdf-table td a:hover i {
+    color: #0056b3; /* Cambiar color del ícono al hacer hover */
+}
+
+</style>
