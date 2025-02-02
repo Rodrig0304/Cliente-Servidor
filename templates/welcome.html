@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenido</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>¡Bienvenido, {{ username }}!</h2>
+        
+        <div class="pdf-options">
+            <h3>Gestiona tus PDFs:</h3>
+            <ul>
+                <li>
+                    <form action="/upload_pdf" method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="username" value="{{ username }}">
+                        <input type="hidden" name="user_id" value="{{ user.id }}">
+                        <input type="file" name="pdf" accept=".pdf" required>
+                        <button type="submit">Agregar PDF</button>
+                    </form>
+                </li>
+                <li>
+                    <h4>Ver PDFs</h4>
+                    <ul>
+                        {% for pdf in pdfs %}
+                            <li>
+                                <a href="{{ url_for('static', filename='uploads/' + pdf.filename) }}" target="_blank">
+                                    {{ pdf.filename }}
+                                </a>
+                                <form action="/delete_pdf/{{ pdf.id }}" method="POST">
+                                    <button type="submit">Eliminar</button>
+                                </form>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

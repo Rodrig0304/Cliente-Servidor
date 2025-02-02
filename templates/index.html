@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login y Registro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Bienvenido, por favor ingresa tus datos</h2>
+
+        <!-- Contenedor de formularios -->
+        <div class="form-container">
+            <!-- Formulario de Login -->
+            <form action="/login" method="POST" id="login-form">
+                <input type="text" name="username" placeholder="Usuario" required>
+                <input type="password" name="password" placeholder="Contraseña" required>
+                <button type="submit">Iniciar sesión</button>
+                <p>¿No tienes cuenta? <a href="#" onclick="toggleForm('register')">Regístrate aquí</a></p>
+            </form>
+
+            <!-- Formulario de Registro -->
+            <form action="/register" method="POST" id="register-form" style="display: none;">
+                <input type="text" name="username" placeholder="Usuario" required>
+                <input type="email" name="email" placeholder="Correo electrónico" required>
+                <input type="password" name="password" placeholder="Contraseña" required>
+                <button type="submit">Crear cuenta</button>
+                <p>¿Ya tienes cuenta? <a href="#" onclick="toggleForm('login')">Inicia sesión</a></p>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Función para cambiar entre los formularios de login y registro
+        function toggleForm(formType) {
+            if (formType === 'register') {
+                document.getElementById('login-form').style.display = 'none';
+                document.getElementById('register-form').style.display = 'block';
+            } else {
+                document.getElementById('login-form').style.display = 'block';
+                document.getElementById('register-form').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
